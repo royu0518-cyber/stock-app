@@ -8,8 +8,8 @@ st.title("📈 株管理")
 
 @st.cache_data(ttl=300)
 def load_data():
-df = pd.read_csv("holdings.csv")
-rows = []
+    df = pd.read_csv("holdings.csv")
+    rows = []
 
 for _, row in df.iterrows():
     try:
