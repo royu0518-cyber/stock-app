@@ -8,8 +8,8 @@ st.title("📈 株管理")
 
 @st.cache_data(ttl=300)
 def load_data():
-    df = pd.read_csv("holdings.csv")
-    rows = []
+df = pd.read_csv("holdings.csv")
+rows = []
 
 for _, row in df.iterrows():
     try:
@@ -30,21 +30,22 @@ for _, row in df.iterrows():
         day_change = (latest - prev) * shares
         day_rate = ((latest - prev) / prev) * 100
 
-        rows.append({
-            "会社名": row["会社名"],
-            "評価額": market_value,
-            "評価損益": profit,
-            "当日変動率": day_rate,
-            "当日評価変動額": day_change,
-            "持ち株数": shares,
-            "購入単価": cost,
-            "前日終値": prev,
-            "最新株価": latest,
-            "ティッカー": ticker
-        })
+        rows.append(
+            {
+                "会社名": row["会社名"],
+                "評価額": market_value,
+                "評価損益": profit,
+                "当日変動率": day_rate,
+                "当日評価変動額": day_change,
+                "持ち株数": shares,
+                "購入単価": cost,
+                "前日終値": prev,
+                "最新株価": latest,
+                "ティッカー": ticker,
+            }
+        )
 
-    except Exception as e:
-        st.warning(f"{ticker} の取得に失敗しました")
+    except Exception:
         continue
 
 return pd.DataFrame(rows)
@@ -89,9 +90,9 @@ display[
 "当日評価変動額",
 "持ち株数",
 "購入単価",
-"最新株価"
+"最新株価",
 ]
 ],
 use_container_width=True,
-hide_index=True
+hide_index=True,
 )
