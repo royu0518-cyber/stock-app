@@ -43,8 +43,9 @@ for _, row in df.iterrows():
             "ティッカー": ticker
         })
 
-    except Exception:
-        pass
+    except Exception as e:
+        st.warning(f"{ticker} の取得に失敗しました")
+        continue
 
 return pd.DataFrame(rows)
 
