@@ -184,8 +184,17 @@ styled = styled.set_properties(
 )
 
 styled = styled.set_table_styles([
+    # 全体は右寄せ
     {"selector": "td", "props": [("text-align", "right")]},
-    {"selector": "th", "props": [("text-align", "right")]}
+    {"selector": "th", "props": [("text-align", "right")]},
+
+    # 会社名だけ左寄せ
+    {"selector": "td:nth-child(1)", "props": [("text-align", "left")]},
+    {"selector": "th:nth-child(1)", "props": [("text-align", "left")]},
+
+    # ティッカーだけ左寄せ
+    {"selector": "td:nth-child(2)", "props": [("text-align", "left")]},
+    {"selector": "th:nth-child(2)", "props": [("text-align", "left")]}
 ])
 
 st.write(styled.to_html(), unsafe_allow_html=True)
