@@ -153,13 +153,19 @@ display = display.sort_values(by="評価額", ascending=False)
 for col in ["評価額", "評価損益", "当日評価変動額"]:
     display[col] = display[col].map(lambda x: f"{x:,.0f}")
 
+display["購入からの変動率"] = (
+    (display["最新株価"] - display["購入単価"])
+    / display["購入単価"] * 100
+)
 display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
+display["購入からの変動率"] = display["購入からの変動率"].map(lambda x: f"{x:.2f}%")
 
 styled = display[
 [
 "会社名",
 "ティッカー",
 "評価額",
+"購入からの変動率",
 "評価損益",
 "当日変動率",
 "当日評価変動額",
