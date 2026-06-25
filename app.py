@@ -151,6 +151,9 @@ display = df.copy()
 # ソート（評価額の大きい順）
 display = display.sort_values(by="評価額", ascending=False)
 
+display = display.reset_index(drop=True)
+display.insert(0, "NO", display.index + 1)
+
 # 数値整形（表示用）
 for col in ["評価額", "評価損益", "当日評価変動額"]:
     display[col] = display[col].map(lambda x: f"{x:,.0f}")
