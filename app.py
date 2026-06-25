@@ -131,30 +131,54 @@ if df.empty:
 st.metric("総資産", f"{df['評価額'].sum():,.0f}円")
 st.metric("評価損益", f"{df['評価損益'].sum():,.0f}円")
 
+def color_profit(val):
+    try:
+        num = float(str(val).replace(",", ""))
+        if num > 0:
+            return "color: green"
+        elif num < 0:
+            return "color: red"
+    except:
+        pass
+    return ""
+    
 st.divider()
 
-# 表示用整形
+def color_profit(val):
+try:
+num = float(str(val).replace(",", ""))
+if num > 0:
+return "background-color:#d4edda"
+elif num < 0:
+return "background-color:#f8d7da"
+except:
+pass
+return ""
+
+表示用整形
+
 display = df.copy()
 
 for col in ["評価額", "評価損益", "当日評価変動額"]:
-    display[col] = display[col].map(lambda x: f"{x:,.0f}")
+display[col] = display[col].map(lambda x: f"{x:,.0f}")
 
 display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
 
-st.dataframe(
-    display[
-        [
-            "会社名",
-            "ティッカー",
-            "評価額",
-            "評価損益",
-            "当日変動率",
-            "当日評価変動額",
-            "持ち株数",
-            "購入単価",
-            "最新株価"
-        ]
-    ],
-    use_container_width=True,
-    hide_index=True
+styled = display[
+[
+"会社名",
+"ティッカー",
+"評価額",
+"評価損益",
+"当日変動率",
+"当日評価変動額",
+"持ち株数",
+"購入単価",
+"最新株価"
+]
+].style.map(
+color_profit,
+subset=["評価損益", "当日評価変動額"]
 )
+
+st.write(styled)
