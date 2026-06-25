@@ -175,7 +175,7 @@ styled = display[
 ]
 ].style.map(
 color_profit,
-subset=["評価損益", "当日評価変動額"]
+subset=["評価損益", "当日評価変動額", "購入からの変動率"]
 )
 
 styled = styled.set_properties(
