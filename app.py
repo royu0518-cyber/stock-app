@@ -197,4 +197,6 @@ styled = styled.set_table_styles([
     {"selector": "th:nth-child(2)", "props": [("text-align", "left")]}
 ])
 
+display = display.sort_values(by="評価額", ascending=False)
+
 st.write(styled.to_html(), unsafe_allow_html=True)
