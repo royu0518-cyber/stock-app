@@ -144,7 +144,7 @@ def color_profit(val):
     
 
 
-表示用整形
+# 表示用整形
 
 display = df.copy()
 
