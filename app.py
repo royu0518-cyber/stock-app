@@ -169,5 +169,17 @@ styled = display[
 color_profit,
 subset=["評価損益", "当日評価変動額"]
 )
+styled = styled.set_properties(
+    subset=[
+        "評価額",
+        "評価損益",
+        "当日変動率",
+        "当日評価変動額",
+        "持ち株数",
+        "購入単価",
+        "最新株価"
+    ],
+    **{"text-align": "right"}
+)
 
 st.write(styled)
