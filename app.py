@@ -149,7 +149,7 @@ def color_profit(val):
 display = df.copy()
 
 for col in ["評価額", "評価損益", "当日評価変動額"]:
-display[col] = display[col].map(lambda x: f"{x:,.0f}")
+    display[col] = display[col].map(lambda x: f"{x:,.0f}")
 
 display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
 
