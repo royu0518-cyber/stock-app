@@ -142,20 +142,7 @@ def color_profit(val):
         pass
     return ""
     
-st.divider()
 
-st.divider()
-
-def color_profit(val):
-try:
-num = float(str(val).replace(",", ""))
-if num > 0:
-return "color: green"
-elif num < 0:
-return "color: red"
-except:
-pass
-return ""
 
 表示用整形
 
