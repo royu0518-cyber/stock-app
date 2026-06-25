@@ -148,7 +148,7 @@ def color_profit(val):
 
 display = df.copy()
 
-display = display.sort_values(by="評価額", ascending=False
+display = display.sort_values(by="評価額", ascending=False)
                               
 for col in ["評価額", "評価損益", "当日評価変動額"]:
     display[col] = display[col].map(lambda x: f"{x:,.0f}")
