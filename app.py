@@ -145,12 +145,12 @@ def color_profit(val):
 st.divider()
 
 def color_profit(val):
-try:
-num = float(str(val).replace(",", ""))
+    try:
+        num = float(str(val).replace(",", ""))
 if num > 0:
-return "background-color:#d4edda"
+            return "background-color:#d4edda"
 elif num < 0:
-return "background-color:#f8d7da"
+            return "background-color:#f8d7da"
 except:
 pass
 return ""
