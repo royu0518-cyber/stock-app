@@ -169,6 +169,7 @@ styled = display[
 color_profit,
 subset=["評価損益", "当日評価変動額"]
 )
+
 styled = styled.set_properties(
     subset=[
         "評価額",
@@ -182,4 +183,9 @@ styled = styled.set_properties(
     **{"text-align": "right"}
 )
 
-st.write(styled)
+styled = styled.set_table_styles([
+    {"selector": "td", "props": [("text-align", "right")]},
+    {"selector": "th", "props": [("text-align", "right")]}
+])
+
+st.write(styled.to_html(), unsafe_allow_html=True)
