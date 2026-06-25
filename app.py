@@ -148,41 +148,64 @@ def color_profit(val):
 
 display = df.copy()
 
+# ソート（評価額の大きい順）
 display = display.sort_values(by="評価額", ascending=False)
-                              
+
+# 数値整形（表示用）
 for col in ["評価額", "評価損益", "当日評価変動額"]:
     display[col] = display[col].map(lambda x: f"{x:,.0f}")
 
+# 購入からの変動率（数値→％）
 display["購入からの変動率"] = (
     (display["最新株価"] - display["購入単価"])
     / display["購入単価"] * 100
 )
+
 display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
 display["購入からの変動率"] = display["購入からの変動率"].map(lambda x: f"{x:.2f}%")
 
+# 色付け関数（安全版）
+def color_profit(val):
+    try:
+        num = float(str(val).replace(",", "").replace("%", ""))
+        if num > 0:
+            return "color: green"
+        elif num < 0:
+            return "color: red"
+    except:
+        pass
+    return ""
+
+# 表示列
 styled = display[
-[
-"会社名",
-"ティッカー",
-"評価額",
-"購入からの変動率",
-"評価損益",
-"当日変動率",
-"当日評価変動額",
-"持ち株数",
-"購入単価",
-"最新株価"
-]
+    [
+        "会社名",
+        "ティッカー",
+        "評価額",
+        "評価損益",
+        "当日変動率",
+        "購入からの変動率",
+        "当日評価変動額",
+        "持ち株数",
+        "購入単価",
+        "最新株価"
+    ]
 ].style.map(
-color_profit,
-subset=["評価損益", "当日評価変動額", "購入からの変動率"]
+    color_profit,
+    subset=[
+        "評価損益",
+        "当日評価変動額",
+        "購入からの変動率"
+    ]
 )
 
+# 右寄せ（数値列）
 styled = styled.set_properties(
     subset=[
         "評価額",
         "評価損益",
         "当日変動率",
+        "購入からの変動率",
         "当日評価変動額",
         "持ち株数",
         "購入単価",
@@ -191,18 +214,11 @@ styled = styled.set_properties(
     **{"text-align": "right"}
 )
 
-styled = styled.set_table_styles([
-    # 全体は右寄せ
-    {"selector": "td", "props": [("text-align", "right")]},
-    {"selector": "th", "props": [("text-align", "right")]},
+# 左寄せ（会社名・ティッカー）
+styled = styled.set_properties(
+    subset=["会社名", "ティッカー"],
+    **{"text-align": "left"}
+)
 
-    # 会社名だけ左寄せ
-    {"selector": "td:nth-child(1)", "props": [("text-align", "left")]},
-    {"selector": "th:nth-child(1)", "props": [("text-align", "left")]},
-
-    # ティッカーだけ左寄せ
-    {"selector": "td:nth-child(2)", "props": [("text-align", "left")]},
-    {"selector": "th:nth-child(2)", "props": [("text-align", "left")]}
-])
-
+# 表示
 st.write(styled.to_html(), unsafe_allow_html=True)
