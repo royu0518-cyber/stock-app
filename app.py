@@ -148,6 +148,8 @@ def color_profit(val):
 
 display = df.copy()
 
+display = display.sort_values(by="評価額", ascending=False
+                              
 for col in ["評価額", "評価損益", "当日評価変動額"]:
     display[col] = display[col].map(lambda x: f"{x:,.0f}")
 
@@ -196,7 +198,5 @@ styled = styled.set_table_styles([
     {"selector": "td:nth-child(2)", "props": [("text-align", "left")]},
     {"selector": "th:nth-child(2)", "props": [("text-align", "left")]}
 ])
-
-display = display.sort_values(by="評価額", ascending=False)
 
 st.write(styled.to_html(), unsafe_allow_html=True)
