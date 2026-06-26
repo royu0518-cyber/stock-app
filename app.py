@@ -110,10 +110,10 @@ def calc():
 
     return pd.DataFrame(rows)
 
-
 # =========================
 # 削除ボタン用関数
 # =========================
+def delete_row_by_ticker(ticker):
     sheet = client.open("stock-app").worksheet("holdings")
 
     records = sheet.get_all_records()
@@ -122,37 +122,6 @@ def calc():
         if str(row["ティッカー"]) == str(ticker):
             sheet.delete_row(i + 2)
             break
-# =========================
-# 表示（UI）
-# =========================
-st.subheader("📋 保有一覧")
-
-df = calc()
-
-if df.empty:
-    st.warning("データがありません")
-    st.stop()
-
-for _, row in df.iterrows():
-
-    col1, col2, col3, col4, col5 = st.columns([3,2,2,2,1])
-
-    with col1:
-        st.write(row["会社名"])
-
-    with col2:
-        st.write(row["ティッカー"])
-
-    with col3:
-        st.write(f"{row['評価額']:,.0f}円")
-
-    with col4:
-        st.write(f"{row['評価損益']:,.0f}円")
-
-    with col5:
-        if st.button("🗑", key=row["ティッカー"]):
-            delete_row_by_ticker(row["ティッカー"])
-            st.rerun()
             
 # =========================
 # 更新ボタン
