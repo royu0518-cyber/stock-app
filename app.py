@@ -120,15 +120,65 @@ if df.empty:
     st.stop()
 
 # =========================
-# サマリー
+# 🔥 表（最上部・色付き）
 # =========================
-st.metric("総資産", f"{df['評価額'].sum():,.0f}円")
-st.metric("評価損益", f"{df['評価損益'].sum():,.0f}円")
+st.subheader("📊 詳細テーブル")
+
+display = df.copy()
+
+# ソート
+display = display.sort_values(by="評価額", ascending=False)
+display = display.reset_index(drop=True)
+display.insert(0, "NO", display.index + 1)
+
+# 変動率追加
+display["購入からの変動率"] = (
+    (display["最新株価"] - display["購入単価"])
+    / display["購入単価"] * 100
+)
+
+# 色付け関数
+def color_profit(val):
+    try:
+        num = float(str(val).replace(",", "").replace("%", ""))
+        if num > 0:
+            return "color: green"
+        elif num < 0:
+            return "color: red"
+    except:
+        pass
+    return ""
+
+styled = display.style.map(
+    color_profit,
+    subset=["評価損益", "当日評価変動額", "当日変動率", "購入からの変動率"]
+)
+
+styled = styled.set_properties(
+    subset=[
+        "評価額",
+        "評価損益",
+        "当日評価変動額",
+        "当日変動率",
+        "購入からの変動率",
+        "持ち株数",
+        "購入単価",
+        "最新株価"
+    ],
+    **{"text-align": "right"}
+)
+
+styled = styled.set_properties(
+    subset=["会社名", "ティッカー"],
+    **{"text-align": "left"}
+)
+
+st.write(styled.to_html(), unsafe_allow_html=True)
 
 st.divider()
 
 # =========================
-# カード一覧（削除付き）
+# 📋 カード一覧（削除付き）
 # =========================
 st.subheader("📋 保有一覧")
 
@@ -157,38 +207,7 @@ for _, row in df.iterrows():
 st.divider()
 
 # =========================
-# 📊 詳細テーブル（復活版）
-# =========================
-st.subheader("📊 詳細テーブル")
-
-display = df.copy()
-
-# ソート
-display = display.sort_values(by="評価額", ascending=False)
-display = display.reset_index(drop=True)
-display.insert(0, "NO", display.index + 1)
-
-# 変動率
-display["購入からの変動率"] = (
-    (display["最新株価"] - display["購入単価"])
-    / display["購入単価"] * 100
-)
-
-# 表示用フォーマット
-display["評価額"] = display["評価額"].map(lambda x: f"{x:,.0f}")
-display["評価損益"] = display["評価損益"].map(lambda x: f"{x:,.0f}")
-display["当日評価変動額"] = display["当日評価変動額"].map(lambda x: f"{x:,.0f}")
-
-display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
-display["購入からの変動率"] = display["購入からの変動率"].map(lambda x: f"{x:.2f}%")
-
-# 表示
-st.dataframe(display, use_container_width=True)
-
-st.divider()
-
-# =========================
-# 追加フォーム
+# ➕ 追加フォーム
 # =========================
 st.subheader("➕ 銘柄追加")
 
@@ -209,7 +228,7 @@ with st.form("add_form"):
             st.error("会社名とティッカーは必須です")
 
 # =========================
-# 更新
+# 🔄 更新
 # =========================
 if st.button("🔄 更新"):
     st.cache_data.clear()
