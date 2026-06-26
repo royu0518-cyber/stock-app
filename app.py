@@ -92,6 +92,7 @@ def calc():
             prev = float(hist["Close"].iloc[-2])
 
             rows.append({
+                "会社名": row["会社名"],
                 "ティッカー": ticker,
                 "持ち株数": shares,
                 "購入単価": cost,
@@ -110,7 +111,7 @@ def calc():
 
 
 # =========================
-# データ取得
+# データ取得（1回）
 # =========================
 df = calc()
 
@@ -127,16 +128,15 @@ st.metric("評価損益", f"{df['評価損益'].sum():,.0f}円")
 st.divider()
 
 # =========================
-# 📊 詳細テーブル（最上部・完成版）
+# 📊 詳細テーブル（最上部）
 # =========================
 st.subheader("📊 詳細テーブル")
 
 display = df.copy()
 
-# 並び替え（評価額順）
+# ソート
 display = display.sort_values(by="評価額", ascending=False)
 display = display.reset_index(drop=True)
-display.insert(0, "NO", display.index + 1)
 
 # 変動率
 display["購入からの変動率"] = (
@@ -167,11 +167,12 @@ display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%
 display["購入からの変動率"] = display["購入からの変動率"].map(lambda x: f"{x:.2f}%")
 
 # =========================
-# 列順（指定通り）
+# 列順（会社名を最初に固定）
 # =========================
 display = display[
     [
-        "NO",
+        "会社名",
+        "ティッカー",
         "評価額",
         "評価損益",
         "当日変動率",
@@ -180,8 +181,7 @@ display = display[
         "持ち株数",
         "購入単価",
         "最新株価",
-        "前日終値",
-        "ティッカー"
+        "前日終値"
     ]
 ]
 
@@ -209,7 +209,9 @@ styled = display.style.map(
     ]
 )
 
+# =========================
 # 右寄せ
+# =========================
 styled = styled.set_properties(
     subset=[
         "評価額",
@@ -226,7 +228,7 @@ styled = styled.set_properties(
 )
 
 styled = styled.set_properties(
-    subset=["ティッカー"],
+    subset=["会社名", "ティッカー"],
     **{"text-align": "left"}
 )
 
@@ -235,7 +237,7 @@ st.write(styled.to_html(), unsafe_allow_html=True)
 st.divider()
 
 # =========================
-# 📋 カード一覧（削除付き）
+# 📋 カード表示（削除付き）
 # =========================
 st.subheader("📋 保有一覧")
 
@@ -244,7 +246,7 @@ for _, row in df.iterrows():
     col1, col2, col3, col4, col5 = st.columns([3,2,2,2,1])
 
     with col1:
-        st.write(row["会社名"] if "会社名" in df.columns else "")
+        st.write(row["会社名"])
 
     with col2:
         st.write(row["ティッカー"])
