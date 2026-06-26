@@ -92,7 +92,6 @@ def calc():
             prev = float(hist["Close"].iloc[-2])
 
             rows.append({
-                "会社名": row["会社名"],
                 "ティッカー": ticker,
                 "持ち株数": shares,
                 "購入単価": cost,
@@ -111,7 +110,7 @@ def calc():
 
 
 # =========================
-# データ取得（1回）
+# データ取得
 # =========================
 df = calc()
 
@@ -120,24 +119,75 @@ if df.empty:
     st.stop()
 
 # =========================
-# 🔥 表（最上部・色付き）
+# サマリー
+# =========================
+st.metric("総資産", f"{df['評価額'].sum():,.0f}円")
+st.metric("評価損益", f"{df['評価損益'].sum():,.0f}円")
+
+st.divider()
+
+# =========================
+# 📊 詳細テーブル（最上部・完成版）
 # =========================
 st.subheader("📊 詳細テーブル")
 
 display = df.copy()
 
-# ソート
+# 並び替え（評価額順）
 display = display.sort_values(by="評価額", ascending=False)
 display = display.reset_index(drop=True)
 display.insert(0, "NO", display.index + 1)
 
-# 変動率追加
+# 変動率
 display["購入からの変動率"] = (
     (display["最新株価"] - display["購入単価"])
     / display["購入単価"] * 100
 )
 
-# 色付け関数
+# =========================
+# 金額フォーマット（千区切り・小数なし）
+# =========================
+money_cols = [
+    "評価額",
+    "評価損益",
+    "当日評価変動額",
+    "持ち株数",
+    "購入単価",
+    "最新株価",
+    "前日終値"
+]
+
+for col in money_cols:
+    display[col] = display[col].map(lambda x: f"{x:,.0f}")
+
+# =========================
+# ％フォーマット
+# =========================
+display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
+display["購入からの変動率"] = display["購入からの変動率"].map(lambda x: f"{x:.2f}%")
+
+# =========================
+# 列順（指定通り）
+# =========================
+display = display[
+    [
+        "NO",
+        "評価額",
+        "評価損益",
+        "当日変動率",
+        "当日評価変動額",
+        "購入からの変動率",
+        "持ち株数",
+        "購入単価",
+        "最新株価",
+        "前日終値",
+        "ティッカー"
+    ]
+]
+
+# =========================
+# 色付け
+# =========================
 def color_profit(val):
     try:
         num = float(str(val).replace(",", "").replace("%", ""))
@@ -151,9 +201,15 @@ def color_profit(val):
 
 styled = display.style.map(
     color_profit,
-    subset=["評価損益", "当日評価変動額", "当日変動率", "購入からの変動率"]
+    subset=[
+        "評価損益",
+        "当日評価変動額",
+        "当日変動率",
+        "購入からの変動率"
+    ]
 )
 
+# 右寄せ
 styled = styled.set_properties(
     subset=[
         "評価額",
@@ -163,13 +219,14 @@ styled = styled.set_properties(
         "購入からの変動率",
         "持ち株数",
         "購入単価",
-        "最新株価"
+        "最新株価",
+        "前日終値"
     ],
     **{"text-align": "right"}
 )
 
 styled = styled.set_properties(
-    subset=["会社名", "ティッカー"],
+    subset=["ティッカー"],
     **{"text-align": "left"}
 )
 
@@ -187,7 +244,7 @@ for _, row in df.iterrows():
     col1, col2, col3, col4, col5 = st.columns([3,2,2,2,1])
 
     with col1:
-        st.write(row["会社名"])
+        st.write(row["会社名"] if "会社名" in df.columns else "")
 
     with col2:
         st.write(row["ティッカー"])
