@@ -119,9 +119,8 @@ def delete_row_by_ticker(ticker):
 
     for i, row in enumerate(records):
         if row["ティッカー"] == ticker:
-            sheet.delete_row(i + 2)  # ヘッダー分調整
+            sheet.delete_row(i + 2)
             break
-
 
 # =========================
 # 表示（UI）
