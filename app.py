@@ -112,14 +112,27 @@ def calc():
 
 
 # =========================
-# 削除ボタン
+# 削除ボタン用関数
 # =========================
 def delete_row_by_ticker(ticker):
     records = sheet.get_all_records()
 
- st.subheader("📋 保有一覧")
+    for i, row in enumerate(records):
+        if row["ティッカー"] == ticker:
+            sheet.delete_row(i + 2)  # ヘッダー分調整
+            break
+
+
+# =========================
+# 表示（UI）
+# =========================
+st.subheader("📋 保有一覧")
 
 df = calc()
+
+if df.empty:
+    st.warning("データがありません")
+    st.stop()
 
 for _, row in df.iterrows():
 
@@ -141,11 +154,6 @@ for _, row in df.iterrows():
         if st.button("🗑", key=row["ティッカー"]):
             delete_row_by_ticker(row["ティッカー"])
             st.rerun()
-
-        
-        if row["ティッカー"] == ticker:
-            sheet.delete_row(i + 2)  # ヘッダー分+1
-            break
             
 # =========================
 # 更新ボタン
