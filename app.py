@@ -118,15 +118,13 @@ def delete_row_by_ticker(ticker):
     try:
         sheet = client.open("stock-app").worksheet("holdings")
 
-        records = sheet.get_all_records()
+        st.write("接続OK")  # ←これ出るか確認
 
-        for i, row in enumerate(records):
-            if str(row["ティッカー"]) == str(ticker):
-                sheet.delete_row(i + 2)
-                break
+        records = sheet.get_all_records()
+        st.write(records[:2])  # ←データ取れるか確認
 
     except Exception as e:
-        st.error(f"削除エラー: {e}")
+        st.error(e)
 # =========================
 # 表示（UI）
 # =========================
