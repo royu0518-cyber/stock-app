@@ -112,6 +112,42 @@ def calc():
 
 
 # =========================
+# 削除ボタン
+# =========================
+def delete_row_by_ticker(ticker):
+    records = sheet.get_all_records()
+
+ st.subheader("📋 保有一覧")
+
+df = calc()
+
+for _, row in df.iterrows():
+
+    col1, col2, col3, col4, col5 = st.columns([3,2,2,2,1])
+
+    with col1:
+        st.write(row["会社名"])
+
+    with col2:
+        st.write(row["ティッカー"])
+
+    with col3:
+        st.write(f"{row['評価額']:,.0f}円")
+
+    with col4:
+        st.write(f"{row['評価損益']:,.0f}円")
+
+    with col5:
+        if st.button("🗑", key=row["ティッカー"]):
+            delete_row_by_ticker(row["ティッカー"])
+            st.rerun()
+
+        
+        if row["ティッカー"] == ticker:
+            sheet.delete_row(i + 2)  # ヘッダー分+1
+            break
+            
+# =========================
 # 更新ボタン
 # =========================
 if st.button("🔄 更新"):
