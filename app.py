@@ -114,15 +114,14 @@ def calc():
 # =========================
 # 削除ボタン用関数
 # =========================
-def delete_row_by_ticker(ticker):
     sheet = client.open("stock-app").worksheet("holdings")
+
     records = sheet.get_all_records()
 
     for i, row in enumerate(records):
         if str(row["ティッカー"]) == str(ticker):
             sheet.delete_row(i + 2)
             break
-
 # =========================
 # 表示（UI）
 # =========================
