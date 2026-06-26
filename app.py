@@ -4,6 +4,123 @@ import yfinance as yf
 import gspread
 from google.oauth2.service_account import Credentials
 
+
+
+
+# =========================
+# 表示
+# =========================
+df = calc()
+
+if df.empty:
+    st.warning("データがありません")
+    st.stop()
+
+# サマリー
+st.metric("総資産", f"{df['評価額'].sum():,.0f}円")
+st.metric("評価損益", f"{df['評価損益'].sum():,.0f}円")
+
+def color_profit(val):
+    try:
+        num = float(str(val).replace(",", ""))
+        if num > 0:
+            return "color: green"
+        elif num < 0:
+            return "color: red"
+    except:
+        pass
+    return ""
+    
+
+
+# 表示用整形
+
+display = df.copy()
+
+# ソート（評価額の大きい順）
+display = display.sort_values(by="評価額", ascending=False)
+
+display = display.reset_index(drop=True)
+display.insert(0, "NO", display.index + 1)
+
+# 数値整形（表示用）
+for col in ["評価額", "評価損益", "当日評価変動額"]:
+    display[col] = display[col].map(lambda x: f"{x:,.0f}")
+
+# 購入からの変動率（数値→％）
+display["購入からの変動率"] = (
+    (display["最新株価"] - display["購入単価"])
+    / display["購入単価"] * 100
+)
+
+display["当日変動率"] = display["当日変動率"].map(lambda x: f"{x:.2f}%")
+display["購入からの変動率"] = display["購入からの変動率"].map(lambda x: f"{x:.2f}%")
+
+# 色付け関数（安全版）
+def color_profit(val):
+    try:
+        num = float(str(val).replace(",", "").replace("%", ""))
+        if num > 0:
+            return "color: green"
+        elif num < 0:
+            return "color: red"
+    except:
+        pass
+    return ""
+
+# 表示列
+styled = display[
+    [
+        "会社名",
+        "ティッカー",
+        "評価額",
+        "購入からの変動率",
+        "評価損益",
+        "当日評価変動額",
+        "当日変動率",
+        "持ち株数",
+        "購入単価",
+        "最新株価"
+    ]
+].style.map(
+    color_profit,
+    subset=[
+        "評価損益",
+        "当日評価変動額",
+        "購入からの変動率"
+    ]
+)
+
+# 右寄せ（数値列）
+styled = styled.set_properties(
+    subset=[
+        "評価額",
+        "購入からの変動率",
+        "評価損益",
+        "当日評価変動額",
+        "当日変動率",
+        "持ち株数",
+        "購入単価",
+        "最新株価"
+    ],
+    **{"text-align": "right"}
+)
+
+# 左寄せ（会社名・ティッカー）
+styled = styled.set_properties(
+    subset=["会社名", "ティッカー"],
+    **{"text-align": "left"}
+)
+
+# 表示
+st.write(styled.to_html(), unsafe_allow_htm
+
+
+
+
+
+
+         
 st.set_page_config(page_title="株管理", layout="wide")
 st.title("📈 株管理")
 
