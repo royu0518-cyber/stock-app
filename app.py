@@ -26,7 +26,7 @@ client = gspread.authorize(creds)
 SPREADSHEET_NAME = "stock-app"
 WORKSHEET_NAME = "holdings"
 
-sheet = client.open(SPREADSHEET_NAME).worksheet(WORKSHEET_NAME)
+sheet = client.open("stock-app").worksheet("holdings")
 
 
 # =========================
