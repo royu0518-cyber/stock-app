@@ -115,15 +115,18 @@ def calc():
 # =========================
 
 def delete_row_by_ticker(ticker):
-    sheet = client.open("stock-app").worksheet("holdings")
+    try:
+        sheet = client.open("stock-app").worksheet("holdings")
 
-    records = sheet.get_all_records()
+        records = sheet.get_all_records()
 
-    for i, row in enumerate(records):
-        if str(row["ティッカー"]) == str(ticker):
-            sheet.delete_row(i + 2)
-            break
+        for i, row in enumerate(records):
+            if str(row["ティッカー"]) == str(ticker):
+                sheet.delete_row(i + 2)
+                break
 
+    except Exception as e:
+        st.error(f"削除エラー: {e}")
 # =========================
 # 表示（UI）
 # =========================
